@@ -1,0 +1,12 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "sandeepphari-blip.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "sandeepphari-blip.github",
+  "start_url": "/",
+  "theme_color": "#101827",
+  "description": "# my-study-tracker\n My Personal Class 10 Study Tracker"
+}

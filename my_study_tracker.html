@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>My Study Tracker</title>
+<style>
+:root{--bg:#0b1220;--panel:#131e30;--panel2:#1b2940;--text:#eef4ff;--muted:#a8b5ca;--accent:#79a8ff;--green:#54d6a0;--line:#293952}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#101c32,#080e19 65%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:850px;margin:auto;padding:22px 15px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:27px;margin:0}.sub{color:var(--muted);margin:5px 0 18px}.pill{background:#20334f;border:1px solid #355276;border-radius:99px;padding:7px 12px;color:#cfe0ff;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:rgba(19,30,48,.96);border:1px solid var(--line);border-radius:17px;padding:16px;margin-bottom:13px;box-shadow:0 8px 25px #0002}
+.stat{font-size:25px;font-weight:750;margin-top:4px}.muted{color:var(--muted);font-size:13px}.bar{height:9px;background:#26364d;border-radius:20px;overflow:hidden;margin-top:10px}.fill{height:100%;width:0;background:linear-gradient(90deg,#6799ff,#54d6a0);border-radius:20px;transition:width .2s}
+h2{font-size:18px;margin:0 0 12px}.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.subject{background:var(--panel2);padding:12px;border-radius:13px;border:1px solid #2b3d58}.subject strong{display:block;margin-bottom:7px}
+button{border:0;border-radius:10px;padding:10px 13px;background:var(--accent);color:#071326;font-weight:700;font-size:14px;cursor:pointer}
+button.secondary{background:#263851;color:var(--text);border:1px solid #3b506d}button.danger{background:#492b36;color:#ffdce3}
+input,select,textarea{width:100%;background:#0c1626;color:var(--text);border:1px solid #344761;border-radius:10px;padding:11px;font:inherit;min-width:0}
+label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.task{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}
+.task input{width:19px;height:19px;flex:0 0 auto;margin-top:2px;accent-color:#54d6a0}
+.task.done span{text-decoration:line-through;color:#8291a8}
+.small{font-size:12px;color:var(--muted)}.section-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+footer{text-align:center;color:#8190a8;font-size:12px;margin-top:22px}
+@media(max-width:560px){.grid,.subjects{grid-template-columns:1fr 1fr}.stat{font-size:22px}main{padding:17px 12px 35px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><div><h1>📚 My Study Tracker</h1><p class="sub">Class 10 • Your personal study dashboard</p></div><span class="pill">Offline • Free</span></div>
+
+  <section class="grid">
+    <div class="card"><div class="muted">Final exam countdown</div><div class="stat" id="daysLeft">—</div><div class="small">Days until 17 February 2027</div></div>
+    <div class="card"><div class="muted">Overall chapter progress</div><div class="stat" id="overall">0%</div><div class="bar"><div class="fill" id="overallBar"></div></div></div>
+  </section>
+
+  <section class="card">
+    <h2>🎯 Your deadlines</h2>
+    <div class="row"><div><div class="muted">Revision + practice target</div><strong>31 December 2026</strong></div><div><div class="muted">Final exams start</div><strong>17 February 2027</strong></div></div>
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>📖 Subject tracker</h2><span class="small">Add chapters below</span></div>
+    <div class="subjects" id="subjects"></div>
+    <label for="subjectSelect">Subject</label><select id="subjectSelect"></select>
+    <label for="chapterName">Chapter / topic name</label>
+    <div class="row"><input id="chapterName" placeholder="e.g. Real Numbers"><button id="addChapter">Add</button></div>
+    <p class="small">Tap a checkbox when you finish revising and practising a chapter.</p>
+    <div id="chapterList"></div>
+  </section>
+
+  <section class="card">
+    <h2>⏱️ Today's study log</h2>
+    <div class="row"><div><label for="studyDate">Date</label><input id="studyDate" type="date"></div><div><label for="studyMinutes">Study time (minutes)</label><input id="studyMinutes" type="number" min="0" max="1440" placeholder="120"></div></div>
+    <label for="studyNote">What did you study?</label><input id="studyNote" placeholder="Maths: Exercise 1.2">
+    <p style="margin:12px 0"><button id="saveLog">Save study session</button></p>
+    <div id="logList"></div>
+  </section>
+
+  <section class="card">
+    <h2>✅ Daily checklist</h2>
+    <div id="dailyList"></div>
+    <div class="row"><input id="newDaily" placeholder="Add your own task"><button id="addDaily">Add task</button></div>
+    <p class="small">Your checklist resets only when you manually uncheck items; it is not erased automatically.</p>
+  </section>
+
+  <section class="card">
+    <h2>📝 Notes / weekly targets</h2>
+    <textarea id="notes" rows="4" placeholder="This week's targets, weak chapters, test scores..."></textarea>
+    <p class="small">Notes save automatically on this device.</p>
+    <button class="secondary" id="exportData">Export my backup</button>
+    <button class="danger" id="resetData">Reset all data</button>
+  </section>
+  <footer>Your data stays in this browser on this device. Export a backup before clearing browser data.</footer>
+</main>
+<script>
+const names=["Maths","Science","Social Science","English","Hindi","IT"];
+const defaults={
+ "Maths":["Real Numbers","Polynomials","Pair of Linear Equations","Quadratic Equations","Arithmetic Progressions","Triangles","Coordinate Geometry","Introduction to Trigonometry","Applications of Trigonometry","Circles","Areas Related to Circles","Surface Areas and Volumes","Statistics","Probability"],
+ "Science":["Chemical Reactions and Equations","Acids, Bases and Salts","Metals and Non-metals","Carbon and its Compounds","Life Processes","Control and Coordination","How do Organisms Reproduce?","Heredity","Light","The Human Eye","Electricity","Magnetic Effects of Electric Current","Our Environment"],
+ "Social Science":["History","Geography","Political Science","Economics"],
+ "English":["Reading","Writing and Grammar","First Flight","Footprints Without Feet"],
+ "Hindi":["अपठित बोध","व्याकरण","क्षितिज / साहित्य","लेखन"],
+ "IT":["Employability Skills","Subject Specific Skills","Practical"]
+};
+const key="myStudyTracker_v1";
+let data=JSON.parse(localStorage.getItem(key)||"null")||{chapters:defaults,checked:{},logs:[],daily:["Maths practice","Science revision","SST revision","Language / IT practice","Revise today's learning"],dailyDone:{},notes:""};
+function save(){localStorage.setItem(key,JSON.stringify(data));render()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function allChapters(){return names.flatMap(s=>(data.chapters[s]||[]).map(c=>({s,c})))}
+function render(){
+ const all=allChapters(),done=all.filter(x=>data.checked[x.s+"|"+x.c]).length,pct=all.length?Math.round(done/all.length*100):0;
+ document.getElementById("overall").textContent=pct+"%";document.getElementById("overallBar").style.width=pct+"%";
+ const days=Math.max(0,Math.ceil((new Date("2027-02-17T00:00:00")-new Date(new Date().toDateString()))/86400000));
+ document.getElementById("daysLeft").textContent=days+" days";
+ document.getElementById("subjects").innerHTML=names.map(s=>{let a=data.chapters[s]||[],d=a.filter(c=>data.checked[s+"|"+c]).length,p=a.length?Math.round(d/a.length*100):0;return `<div class="subject"><strong>${esc(s)}</strong><span class="small">${d}/${a.length} chapters • ${p}%</span><div class="bar"><div class="fill" style="width:${p}%"></div></div></div>`}).join("");
+ document.getElementById("subjectSelect").innerHTML=names.map(s=>`<option>${esc(s)}</option>`).join("");
+ document.getElementById("chapterList").innerHTML=names.map(s=>{let a=data.chapters[s]||[];return `<div style="margin-top:13px"><strong>${esc(s)}</strong>${a.map(c=>{let id=s+"|"+c;return `<div class="task ${data.checked[id]?"done":""}"><input type="checkbox" data-chapter="${esc(id)}" ${data.checked[id]?"checked":""}><span>${esc(c)}</span></div>`}).join("")}</div>`}).join("");
+ document.getElementById("dailyList").innerHTML=data.daily.map((t,i)=>`<div class="task ${data.dailyDone[i]?"done":""}"><input type="checkbox" data-daily="${i}" ${data.dailyDone[i]?"checked":""}><span>${esc(t)}</span></div>`).join("");
+ document.getElementById("logList").innerHTML=data.logs.slice(-5).reverse().map(l=>`<div class="task"><span><strong>${esc(l.date)}</strong> — ${esc(l.minutes)} min<br><span class="small">${esc(l.note)}</span></span></div>`).join("");
+ document.getElementById("notes").value=data.notes;
+ document.querySelectorAll("[data-chapter]").forEach(el=>el.addEventListener("change",()=>{data.checked[el.dataset.chapter]=el.checked;save()}));
+ document.querySelectorAll("[data-daily]").forEach(el=>el.addEventListener("change",()=>{data.dailyDone[el.dataset.daily]=el.checked;save()}));
+}
+document.getElementById("addChapter").onclick=()=>{let s=document.getElementById("subjectSelect").value,c=document.getElementById("chapterName").value.trim();if(!c)return;if(!data.chapters[s].includes(c))data.chapters[s].push(c);document.getElementById("chapterName").value="";save()};
+document.getElementById("addDaily").onclick=()=>{let v=document.getElementById("newDaily").value.trim();if(v){data.daily.push(v);document.getElementById("newDaily").value="";save()}};
+document.getElementById("saveLog").onclick=()=>{let date=document.getElementById("studyDate").value,minutes=Number(document.getElementById("studyMinutes").value),note=document.getElementById("studyNote").value.trim();if(!date||!minutes||minutes<1){alert("Date aur study minutes enter karo.");return}data.logs.push({date,minutes,note});document.getElementById("studyMinutes").value="";document.getElementById("studyNote").value="";save()};
+document.getElementById("notes").addEventListener("input",e=>{data.notes=e.target.value;localStorage.setItem(key,JSON.stringify(data))});
+document.getElementById("exportData").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-study-tracker-backup.json";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("resetData").onclick=()=>{if(confirm("Are you sure? This will erase your tracker data on this device.")){localStorage.removeItem(key);location.reload()}};
+document.getElementById("studyDate").value=new Date().toISOString().slice(0,10);
+render();
+</script>
+</body>
+</html>
